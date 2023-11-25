@@ -1,0 +1,110 @@
+import requests 
+import json
+import random
+
+# Task 1: Working with todos
+
+class ToDo:
+    def __init__(self, user_id, title, completed):
+        self.user_id = user_id
+        self.title = title
+        self.completed = completed
+
+def make_get_request(post_id):
+    url = f'https://jsonplaceholder.typicode.com/todos/{post_id}'
+    response = requests.get(url)
+
+    if response.status_code in {400, 401, 402, 403, 404, 500, 501, 502, 503}:
+        print(f"Error: {response.status_code}")
+    else:
+        print("GET Response:")
+        print(response.json())
+
+def make_post_request(todo):
+    url = 'https://jsonplaceholder.typicode.com/todos'
+    payload = {
+        "userId": todo.user_id,
+        "title": todo.title,
+        "completed": todo.completed
+    }
+    response = requests.post(url, json=payload)
+
+    if response.status_code in {400, 401, 402, 403, 404, 500, 501, 502, 503}:
+        print(f"Error: {response.status_code}")
+    else:
+        print("POST Response:")
+        print(response.json())
+
+def make_put_request(chosen_id, updated_todo):
+    url = f'https://jsonplaceholder.typicode.com/todos/{chosen_id}'
+    response = requests.put(url, json=updated_todo)
+
+    if response.status_code in {400, 401, 402, 403, 404, 500, 501, 502, 503}:
+        print(f"Error: {response.status_code}")
+    else:
+        print("PUT Response:")
+        print(response.json())
+
+# Example Usage
+post_id = 1
+todo_example = ToDo(user_id=1, title="Example Todo", completed=False)
+
+# 1.1: GET Request
+make_get_request(post_id)
+
+# 1.2: Create a class "ToDo"
+# 1.3: Create a new object of class ToDo
+new_todo = ToDo(user_id=2, title="New Todo", completed=True)
+
+# 1.4: POST Request
+make_post_request(new_todo)
+
+# 1.5: Edit some data
+new_todo.title = "Updated Todo"
+
+# 1.6: PUT Request
+make_put_request(post_id, updated_todo=new_todo)
+
+
+# Task 2: Character Exploration
+
+# 2.1 Random Character Request
+random_character_id = random.randint(1, 826)
+character_url = f'https://rickandmortyapi.com/api/character/{random_character_id}'
+character_response = requests.get(character_url).json()
+
+# 2.2 Response Output
+print("Character JSON Response:")
+print(json.dumps(character_response, indent=2))
+print("Keys in JSON:")
+print(character_response.keys())
+
+# 2.3 Save to File
+filename = f"info_character_{random_character_id}.json"
+with open(filename, 'w') as file:
+    json.dump(character_response, file, indent=2)
+
+# 2.4 Episode List
+episode_urls = character_response['episode']
+episode_ids = [url.split("/")[-1] for url in episode_urls]
+episodes_filename = f"all_episodes_with_character_{random_character_id}.txt"
+
+with open(episodes_filename, 'a') as file:
+    for episode_id in episode_ids:
+        file.write(f"{episode_id}\n")
+
+# 2.5 Episode Response Structure
+episode_response = requests.get('https://rickandmortyapi.com/api/episode/1').json()
+print("Episode 1 JSON Response Structure:")
+print(json.dumps(episode_response, indent=2))
+
+# 2.6 Episode Class Creation
+class Episode:
+    def __init__(self, id, name, air_date, episode, characters):
+        self.id = id
+        self.name = name
+        self.air_date = air_date
+        self.episode = episode
+        self.characters = characters
+
+# (Continue with the remaining tasks, creating Character class and objects)
